@@ -793,7 +793,11 @@ int GambatteSdl::run(long const sampleRate, int const latency, int const periods
 	AudioOut aout(sampleRate, latency, periods, resamplerInfo, audioBuf.size());
 	FrameWait frameWait;
 	SkipSched skipSched;
+#ifndef EMSCRIPTEN
 	Uint8 const *const keys = SDL_GetKeyState(0);
+#else
+	Uint8 const *const keys = SDL_GetKeyboardState(0);
+#endif // EMSCRIPTEN
 	std::size_t bufsamples = 0;
 	bool audioOutBufLow = false;
 

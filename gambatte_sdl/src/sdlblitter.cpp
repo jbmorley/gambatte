@@ -58,7 +58,11 @@ SdlBlitter::PixelBuffer SdlBlitter::inBuffer() const {
 		pb.format = UYVY;
 		pb.pitch = overlay_->pitches[0] >> 2;
 	} else if (SDL_Surface *s = surface_ ? surface_.get() : screen_) {
+#ifndef EMSCRIPTEN
 		pb.pixels = static_cast<char *>(s->pixels) + s->offset;
+#else
+		pb.pixels = static_cast<char *>(s->pixels) /* + s->offset */;
+#endif // EMSCRIPTEN
 		pb.format = s->format->BitsPerPixel == 16 ? RGB16 : RGB32;
 		pb.pitch = s->pitch / s->format->BytesPerPixel;
 	}
@@ -68,8 +72,13 @@ SdlBlitter::PixelBuffer SdlBlitter::inBuffer() const {
 
 template<typename T>
 inline void SdlBlitter::swScale() {
+#ifndef EMSCRIPTEN
 	T const *src = reinterpret_cast<T *>(static_cast<char *>(surface_->pixels) + surface_->offset);
 	T       *dst = reinterpret_cast<T *>(static_cast<char *>(screen_->pixels) + screen_->offset);
+#else
+	T const *src = reinterpret_cast<T *>(static_cast<char *>(surface_->pixels)/* + surface_->offset */);
+	T       *dst = reinterpret_cast<T *>(static_cast<char *>(screen_->pixels)/* + screen_->offset */);		
+#endif // EMSCRIPTEN
 	scaleBuffer(src, dst, surface_->w, surface_->h,
 	            screen_->pitch / screen_->format->BytesPerPixel, screen_->h / surface_->h);
 }

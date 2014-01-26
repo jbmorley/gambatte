@@ -14,3 +14,5 @@ gambatte_qt/src/moc_*.cpp
 gambatte_qt/src/release/
 gambatte_qt/bin/
 testrunner/testrunner
+gambatte_js/gambatte_sdl.js
+gambatte_js/gambatte_sdl.js.map
